@@ -16,6 +16,7 @@ import javax.swing.undo.UndoManager;
 import javax.swing.border.*;
 import java.util.*;
 import java.awt.font.TextAttribute;
+import java.awt.image.*;
 
 class ToolBox extends JComponent
 {
@@ -28,7 +29,16 @@ class ToolBox extends JComponent
         setLayout(new GridLayout(8, 2));
         for(int i = 0; i < 16; i++)
         {
-            B.add(new JButton("i"));
+            ImageIcon imag = new ImageIcon(getClass().getResource("resources//paint.png"));
+            Image img = imag.getImage();
+            BufferedImage resizedImg = new BufferedImage(40, 40, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g4 = resizedImg.createGraphics();
+            g4.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g4.drawImage(img, 0, 0, 40, 40, null);
+            g4.dispose();
+            imag = new ImageIcon(resizedImg);
+            B.add(new JButton("", imag));
+            B.get(i).setPreferredSize(new Dimension(40, 40));
             add(B.get(i));
             final int z = i;
             B.get(i).addActionListener(new ActionListener(){

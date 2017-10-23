@@ -1,22 +1,26 @@
 import java.awt.*;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.font.TextAttribute;
+import java.awt.geom.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.io.*;
+import java.util.*;
 import java.util.Scanner;
 import javax.swing.*;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.border.*;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.filechooser.*;
 import javax.swing.undo.*;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.UndoManager;
-import javax.swing.border.*;
-import java.util.*;
-import java.awt.font.TextAttribute;
-import java.awt.geom.*;
 
 class DrawingPanel extends JComponent
 {
@@ -35,11 +39,11 @@ class DrawingPanel extends JComponent
     }
     public DrawingPanel()
     {
-    //    setDoubleBuffered(false);
         setSize(800, 800);
         pt2 = new ArrayList<>();
         pt = new ArrayList<>();
         tmp = null;
+
         addMouseListener(new MouseAdapter(){
             /*public void mouseClicked(MouseEvent e)
             {
@@ -50,19 +54,35 @@ class DrawingPanel extends JComponent
             }*/
             public void mousePressed(MouseEvent e)
             {
-                System.out.println(ToolBox.getSelected());
+                //System.out.println(ToolBox.getSelected());
                 a = e.getX();
                 b = e.getY();
+                g2.drawLine(a, b, a, b);
+                if(ToolBox.getSelected() == 1)
+                {
+                    Rectangle2D k = new Rectangle2D.Double(a - 5, b - 5, 10, 10);
+                    g2.fill(k);
+                }
+                else if(ToolBox.getSelected() == 2)
+                {
+                    Ellipse2D k = new Ellipse2D.Double();
+                    double radius = 5;
+                    k.setFrameFromCenter(a, b, a + radius, b + radius);
+                    g2.fill(k);
+            //        k.setFrameFromCenter(c, d, c + radius, d + radius);
+            //        g2.fill(k);
+                }
                 /*tmp = new ArrayList<>();
                 tmp.add(e.getPoint());
                 pt.add(tmp);
                 repaint();*/
+                repaint();
             }
         });
         addMouseMotionListener(new MouseMotionAdapter(){
             public void mouseDragged(MouseEvent e)
             {
-                System.out.println(ToolBox.getSelected());
+                //System.out.println(ToolBox.getSelected());
                 //tmp.add(e.getPoint());
                 c = e.getX();
                 d = e.getY();
@@ -72,6 +92,47 @@ class DrawingPanel extends JComponent
                     {
                         g2.drawLine(a, b, a, b);
                         g2.drawLine(c, d, c, d);
+                        Ellipse2D k = new Ellipse2D.Double();
+                        double radius = 5;
+                        k.setFrameFromCenter(a, b, a + radius, b + radius);
+                //        g2.fill(k);
+                        k.setFrameFromCenter(c, d, c + radius, d + radius);
+                //        g2.fill(k);
+                        g2.drawLine(a, b, c, d);
+                        for(int i = 0; i < 5; i++)
+                        {
+                            g2.drawLine(a + i + 1, b + i + 1, c + i + 1, d + i + 1);
+                            g2.drawLine(a + i + 1, b + i + 1, c + i + 1, d - i - 1);
+                            g2.drawLine(a + i + 1, b + i + 1, c - i - 1, d + i + 1);
+                            g2.drawLine(a + i + 1, b + i + 1, c - i - 1, d - i - 1);
+                        }
+                        for(int i = 0; i < 5; i++)
+                        {
+                            g2.drawLine(a + i + 1, b - i - 1, c + i + 1, d + i + 1);
+                            g2.drawLine(a + i + 1, b - i - 1, c + i + 1, d - i - 1);
+                            g2.drawLine(a + i + 1, b - i - 1, c - i - 1, d + i + 1);
+                            g2.drawLine(a + i + 1, b - i - 1, c - i - 1, d - i - 1);
+                        }
+                        for(int i = 0; i < 5; i++)
+                        {
+                            g2.drawLine(a - i - 1, b + i + 1, c + i + 1, d + i + 1);
+                            g2.drawLine(a - i - 1, b + i + 1, c + i + 1, d - i - 1);
+                            g2.drawLine(a - i - 1, b + i + 1, c - i - 1, d + i + 1);
+                            g2.drawLine(a - i - 1, b + i + 1, c - i - 1, d - i - 1);
+                        }
+                        for(int i = 0; i < 5; i++)
+                        {
+                            g2.drawLine(a - i - 1, b - i - 1, c + i + 1, d + i + 1);
+                            g2.drawLine(a - i - 1, b - i - 1, c + i + 1, d - i - 1);
+                            g2.drawLine(a - i - 1, b - i - 1, c - i - 1, d + i + 1);
+                            g2.drawLine(a - i - 1, b - i - 1, c - i - 1, d - i - 1);
+                        }
+                    }
+                    else if(ToolBox.getSelected() == 2)
+                    {
+                        g2.setStroke(new BasicStroke(10));
+                        g2.drawLine(a, b, c, d);
+                        g2.setStroke(new BasicStroke());
                     }
                     else
                         g2.drawLine(a, b, c, d);
@@ -87,6 +148,7 @@ class DrawingPanel extends JComponent
         g2.setPaint(Color.white);
 		g2.fillRect(0, 0, getSize().width, getSize().height);
 		g2.setPaint(Color.black);
+        g2.setColor(Color.BLUE);
 		repaint();
 	}
 
